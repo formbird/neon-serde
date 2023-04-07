@@ -16,6 +16,14 @@ fn as_num<T: num::cast::NumCast, OutT: num::cast::NumCast>(n: T) -> LibResult<Ou
     }
 }
 
+fn to_date<'c>(cx: &mut impl Context<'c>, value: Handle<'c, JsValue>) -> Result<Handle<'c, JsObject>, Error> {
+    let value = value.downcast::<JsNumber, _>(cx).unwrap();
+    let value = value.value(cx);
+    let date = cx.date(value)?;
+    let obj = date.downcast_or_throw::<JsObject, _>(cx)?;
+    Ok(obj)
+}
+
 /// Converts a value of type `V` to a `JsValue`
 ///
 /// # Errors
@@ -472,9 +480,20 @@ where
     where
         T: Serialize,
     {
-        let key: Handle<'j, JsValue> = self.key_holder.get(&mut *self.cx, "key")?;
-        let value_obj = to_value(self.cx, value)?;
-        self.object.set(self.cx, key, value_obj)?;
+        let key = self.key_holder.get::<JsString, _, _>(&mut *self.cx, "key");
+        let key = key.map(|key| key.value(self.cx) == "__neon_serde_date");
+        if key.unwrap_or(false) {
+            // this round-trip is necessary because the date constructor expects a number
+            // and we have a &T: Serialize
+            // We extract the number by converting T to JsValue and then downcasting it to JsNumber
+            let value = to_value(self.cx, value)?;
+            self.object = to_date(self.cx, value)?;
+        } else {
+            let key: Handle<'j, JsValue> = self.key_holder.get(&mut *self.cx, "key")?;
+            let value_obj = to_value(self.cx, value)?;
+            self.object.set(self.cx, key, value_obj)?;
+        }
+
         Ok(())
     }
 
@@ -514,7 +533,11 @@ where
         T: Serialize,
     {
         let value = to_value(self.cx, value)?;
-        self.object.set(self.cx, key, value)?;
+        if key == "__neon_serde_date" {
+            self.object = to_date(self.cx, value)?
+        } else {
+            self.object.set(self.cx, key, value)?;
+        }
         Ok(())
     }
 

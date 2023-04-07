@@ -8,6 +8,8 @@ pub mod errors;
 pub mod ser;
 
 mod macros;
+#[cfg(feature = "dates")]
+pub mod dates;
 
 pub use de::{from_value, from_value_opt};
 pub use ser::to_value;

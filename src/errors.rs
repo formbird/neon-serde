@@ -37,6 +37,9 @@ pub enum Error {
     /// This type of object is not supported
     #[error("Not Implemented {0}")]
     NotImplemented(&'static str),
+    /// This type of object is not supported
+    #[error("{0}")]
+    DateError(#[from] neon::types::DateError),
     /// A JS exception was thrown
     #[error("JS exception")]
     Js(neon::result::Throw),
