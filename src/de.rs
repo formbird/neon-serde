@@ -270,8 +270,9 @@ impl<'x, 'a, 'j, C: Context<'j>> MapAccess<'x> for JsObjectAccess<'a, 'j, C> {
         let prop_name = self.prop_names.get::<JsString, _, _>(self.cx, self.idx)?;
         let value = self.input.get(self.cx, prop_name)?;
         let global = self.cx.global();
-        let console = global.get::<JsObject, _ , _>(self.cx, "console")?;
-            console.get::<JsFunction, _, _>(self.cx, "log")?
+        let console = global.get::<JsObject, _, _>(self.cx, "console")?;
+        console
+            .get::<JsFunction, _, _>(self.cx, "log")?
             .call(self.cx, global, vec![value])?;
         self.idx += 1;
         let mut de = Deserializer::new(self.cx, value);

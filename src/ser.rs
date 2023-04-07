@@ -16,7 +16,10 @@ fn as_num<T: num::cast::NumCast, OutT: num::cast::NumCast>(n: T) -> LibResult<Ou
     }
 }
 
-fn to_date<'c>(cx: &mut impl Context<'c>, value: Handle<'c, JsValue>) -> Result<Handle<'c, JsObject>, Error> {
+fn to_date<'c>(
+    cx: &mut impl Context<'c>,
+    value: Handle<'c, JsValue>,
+) -> Result<Handle<'c, JsObject>, Error> {
     let value = value.downcast::<JsNumber, _>(cx).unwrap();
     let value = value.value(cx);
     let date = cx.date(value)?;

@@ -162,11 +162,11 @@ make_expect!(
 fn roundtrip_object(mut cx: FunctionContext) -> JsResult<JsValue> {
     let arg0 = cx.argument::<JsValue>(0)?;
 
-    let de_serialized: AnObjectTwo = neon_serde::from_value(&mut cx, arg0)
-        .or_else(|e| cx.throw_error(e.to_string()))?;
+    let de_serialized: AnObjectTwo =
+        neon_serde::from_value(&mut cx, arg0).or_else(|e| cx.throw_error(e.to_string()))?;
 
-    let handle = neon_serde::to_value(&mut cx, &de_serialized)
-        .or_else(|e| cx.throw_error(e.to_string()))?;
+    let handle =
+        neon_serde::to_value(&mut cx, &de_serialized).or_else(|e| cx.throw_error(e.to_string()))?;
 
     Ok(handle)
 }
@@ -178,25 +178,23 @@ struct RoundtripWithDates {
 fn roundtrip_with_dates(mut cx: FunctionContext) -> JsResult<JsValue> {
     let arg0 = cx.argument::<JsValue>(0)?;
 
-    let de_serialized: RoundtripWithDates = neon_serde::from_value(&mut cx, arg0)
-        .or_else(|e| cx.throw_error(e.to_string()))?;
+    let de_serialized: RoundtripWithDates =
+        neon_serde::from_value(&mut cx, arg0).or_else(|e| cx.throw_error(e.to_string()))?;
 
-    let handle = neon_serde::to_value(&mut cx, &de_serialized)
-        .or_else(|e| cx.throw_error(e.to_string()))?;
+    let handle =
+        neon_serde::to_value(&mut cx, &de_serialized).or_else(|e| cx.throw_error(e.to_string()))?;
 
     Ok(handle)
 }
 
-
-
 fn roundtrip_serde_json_value(mut cx: FunctionContext) -> JsResult<JsValue> {
     let arg0 = cx.argument::<JsValue>(0)?;
 
-    let de_serialized: serde_json::Value = neon_serde::from_value(&mut cx, arg0)
-        .or_else(|e| cx.throw_error(e.to_string()))?;
+    let de_serialized: serde_json::Value =
+        neon_serde::from_value(&mut cx, arg0).or_else(|e| cx.throw_error(e.to_string()))?;
 
-    let handle = neon_serde::to_value(&mut cx, &de_serialized)
-        .or_else(|e| cx.throw_error(e.to_string()))?;
+    let handle =
+        neon_serde::to_value(&mut cx, &de_serialized).or_else(|e| cx.throw_error(e.to_string()))?;
 
     Ok(handle)
 }
