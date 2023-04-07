@@ -28,7 +28,7 @@ features = ["default-panic-hook", "napi-6", "try-catch-api", "event-queue-api"]
 serde = { version = "1.0", features = ["derive"] }
 
 [features]
-dates = []
+dates = ["serde/derive"]
 
 [workspace]
 members = ["test_macro/native", "tests/native"]

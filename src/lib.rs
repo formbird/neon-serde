@@ -16,6 +16,7 @@ pub use ser::to_value;
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::let_unit_value)]
     use neon::prelude::*;
 
     use super::*;
@@ -25,10 +26,9 @@ mod tests {
         fn check<'j>(mut cx: FunctionContext<'j>) -> JsResult<'j, JsValue> {
             let result: () = {
                 let arg: Handle<'j, JsValue> = cx.argument::<JsValue>(0)?;
-                let () = from_value(&mut cx, arg)
+                from_value(&mut cx, arg)
                     .or_else(|e| cx.throw_error(e.to_string()))
-                    .unwrap();
-                ()
+                    .unwrap()
             };
             let result: Handle<'j, JsValue> = to_value(&mut cx, &result)
                 .or_else(|e| cx.throw_error(e.to_string()))
@@ -44,9 +44,9 @@ mod tests {
         fn check<'j>(mut cx: FunctionContext<'j>) -> JsResult<'j, JsValue> {
             let result: () = {
                 let arg: Option<Handle<'j, JsValue>> = cx.argument_opt(0);
-                let () = from_value_opt(&mut cx, arg)
+                from_value_opt(&mut cx, arg)
                     .or_else(|e| cx.throw_error(e.to_string()))
-                    .unwrap();
+                    .unwrap()
             };
             let result: Handle<'j, JsValue> = to_value(&mut cx, &result)
                 .or_else(|e| cx.throw_error(e.to_string()))

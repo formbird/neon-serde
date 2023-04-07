@@ -23,7 +23,7 @@ jobs:
 
   clippy:
     runs-on: ubuntu-latest
-    name: ${{ matrix.toolchain }} / clippy
+    name: clippy
     permissions:
       contents: read
       checks: write
@@ -39,6 +39,7 @@ jobs:
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          args: --workspace --all-features
 
   rust-tests:
     runs-on: ubuntu-latest
