@@ -147,7 +147,9 @@ impl<'x, 'd, 'a, 'j, C: Context<'j>> serde::de::Deserializer<'x>
             let prop_names = val.get_own_property_names(self.cx)?;
             let len = prop_names.len(self.cx);
             if len != 1 {
-                return Err(LibError::InvalidKeyType(format!("object key with {len} properties")))?
+                return Err(LibError::InvalidKeyType(format!(
+                    "object key with {len} properties"
+                )))?;
             }
             let key = prop_names.get::<JsString, _, _>(self.cx, 0)?;
             let enum_value = val.get(self.cx, key)?;

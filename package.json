@@ -1,0 +1,11 @@
+{
+  "name": "neon-serde",
+  "version": "0.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/formbird/neon-serde.git",
+  "private": true,
+  "workspaces": ["tests", "test_macro"],
+  "scripts": {
+    "test": "yarn workspaces run test"
+  }
+}

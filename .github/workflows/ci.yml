@@ -19,8 +19,7 @@ jobs:
         with:
           components: rustfmt
 
-      - name: cargo fmt --check
-        run: cargo fmt --check
+      - run: cargo +nightly fmt --check
 
   clippy:
     runs-on: ubuntu-latest
@@ -41,7 +40,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  test:
+  rust-tests:
     runs-on: ubuntu-latest
     name: rust tests
     steps:
@@ -53,18 +52,17 @@ jobs:
       - name: cargo test
         run: cargo test --all-features --all-targets
 
-  end-to-end:
+  node-tests:
     runs-on: ubuntu-latest
-    name: stable / rust tests
+    name: node tests
     strategy:
       fail-fast: false
       matrix:
         node: [ 16, 18 ]
-        dir: [ tests, test_macro ]
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install stable
+      - name: Install stable Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install Node.js
@@ -73,20 +71,18 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
 
-      - name: ${{ matrix.dir }} / yarn install
-        working-directory: ${{ matrix.dir }}
-        run: yarn install
+      - name: yarn install
+        run: yarn install --immutable
 
-      - name: ${{ matrix.dir }} / yarn test
-        working-directory: ${{ matrix.dir }}
+      - name: yarn test
         run: yarn test
 
   doc:
     runs-on: ubuntu-latest
     name: nightly / doc
     needs:
-      - test
-      - end-to-end
+      - rust-tests
+      - node-tests
     permissions:
       pages: write
       id-token: write
