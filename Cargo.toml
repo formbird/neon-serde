@@ -3,11 +3,12 @@ name = "neon-serde2"
 version = "0.8.0"
 authors = [
     "Damir Jelić <poljar@termina.org.uk>",
-    "Gabriel Castro <dev@GabrielCastro.ca>"
+    "Gabriel Castro <dev@GabrielCastro.ca>",
+    "Muhammad Hamza <mhamza@formbird.com>"
 ]
-description = "Easily serialize object for use with neon, fork of neon-serde"
+description = "Easily serialize object for use with neon"
 license = "MIT"
-repository = "https://github.com/matrix-org/neon-serde"
+repository = "https://github.com/formbird/neon-serde"
 readme = "readme.md"
 edition = "2021"
 
