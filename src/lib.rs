@@ -7,8 +7,8 @@ pub mod ser;
 mod macros;
 
 pub use de::{from_value, from_value_opt};
-pub use ser::to_value;
 use neon::prelude::*;
+pub use ser::to_value;
 
 pub fn log<'a, C: Context<'a>>(cx: &mut C, val: Handle<'a, JsValue>) -> JsResult<'a, JsValue> {
     let global = cx.global();

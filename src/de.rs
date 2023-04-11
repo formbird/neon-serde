@@ -87,7 +87,8 @@ impl<'x, 'd, 'a, 'j, C: Context<'j>> serde::de::Deserializer<'x>
             #[cfg(feature = "dates")]
             {
                 let date = date.value(self.cx);
-                let date = chrono::TimeZone::timestamp_millis_opt(&chrono::Utc, date as i64).unwrap();
+                let date =
+                    chrono::TimeZone::timestamp_millis_opt(&chrono::Utc, date as i64).unwrap();
                 visitor.visit_string(date.to_rfc3339())
             }
             #[cfg(not(feature = "dates"))]
