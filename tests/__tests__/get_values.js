@@ -111,23 +111,17 @@ describe('all values ok', () => {
         native.expect_obj(obj);
     });
 
-
-    it('rt_dates_js_rust_js', () => {
-        const o = {
-            date2: new Date()
-        }
-        const o2 = native.roundtrip_with_dates(o);
-        expect(o).toEqual(o2);
-    });
-
     it('rt_js_rust_js_serde_json_value', () => {
+        const date = new Date()
         const o = {
             age: 10,
             gender: 'male',
             name: 'name2',
-            date2: new Date()
+            date2: date
         }
         const o2 = native.roundtrip_serde_json_value(o);
+        // convert to js date for euqality check
+        o2.date2 = new Date(o2.date2);
         expect(o).toEqual(o2);
     });
 

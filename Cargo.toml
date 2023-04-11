@@ -18,6 +18,7 @@ name = "neon_serde"
 serde = "1.0"
 thiserror = "1.0.40"
 num = { version = "0.4.0", default-features = false }
+chrono = { version = "0.4.24", features = ["serde"], optional = true }
 
 [dependencies.neon]
 version = "0.10.1"
@@ -29,7 +30,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_bytes = "0.11.9"
 
 [features]
-dates = ["serde/derive"]
+dates = ["dep:chrono"]
 
 [workspace]
 members = ["test_macro/native", "tests/native"]

@@ -170,22 +170,6 @@ fn roundtrip_object(mut cx: FunctionContext) -> JsResult<JsValue> {
     Ok(handle)
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct RoundtripWithDates {
-    date2: neon_serde::dates::JsDate,
-}
-fn roundtrip_with_dates(mut cx: FunctionContext) -> JsResult<JsValue> {
-    let arg0 = cx.argument::<JsValue>(0)?;
-
-    let de_serialized: RoundtripWithDates =
-        neon_serde::from_value(&mut cx, arg0).or_else(|e| cx.throw_error(e.to_string()))?;
-
-    let handle =
-        neon_serde::to_value(&mut cx, &de_serialized).or_else(|e| cx.throw_error(e.to_string()))?;
-
-    Ok(handle)
-}
-
 fn roundtrip_serde_json_value(mut cx: FunctionContext) -> JsResult<JsValue> {
     let arg0 = cx.argument::<JsValue>(0)?;
 
@@ -198,23 +182,24 @@ fn roundtrip_serde_json_value(mut cx: FunctionContext) -> JsResult<JsValue> {
     Ok(handle)
 }
 
-register_module!(mut m, {
-    m.export_function("make_num_77", make_num_77)?;
-    m.export_function("make_num_32", make_num_32)?;
-    m.export_function("make_str_hello", make_str_hello)?;
-    m.export_function("make_num_array", make_num_array)?;
-    m.export_function("make_buff", make_buff)?;
-    m.export_function("make_obj", make_obj)?;
-    m.export_function("make_object", make_object)?;
-    m.export_function("make_map", make_map)?;
+#[neon::main]
+fn main(mut cx: ModuleContext) -> NeonResult<()> {
+    cx.export_function("make_num_77", make_num_77)?;
+    cx.export_function("make_num_32", make_num_32)?;
+    cx.export_function("make_str_hello", make_str_hello)?;
+    cx.export_function("make_num_array", make_num_array)?;
+    cx.export_function("make_buff", make_buff)?;
+    cx.export_function("make_obj", make_obj)?;
+    cx.export_function("make_object", make_object)?;
+    cx.export_function("make_map", make_map)?;
 
-    m.export_function("expect_hello_world", expect_hello_world)?;
-    m.export_function("expect_obj", expect_obj)?;
-    m.export_function("expect_num_array", expect_num_array)?;
-    m.export_function("expect_buffer", expect_buffer)?;
+    cx.export_function("expect_hello_world", expect_hello_world)?;
+    cx.export_function("expect_obj", expect_obj)?;
+    cx.export_function("expect_num_array", expect_num_array)?;
+    cx.export_function("expect_buffer", expect_buffer)?;
 
-    m.export_function("roundtrip_object", roundtrip_object)?;
-    m.export_function("roundtrip_serde_json_value", roundtrip_serde_json_value)?;
-    m.export_function("roundtrip_with_dates", roundtrip_with_dates)?;
+    cx.export_function("roundtrip_object", roundtrip_object)?;
+    cx.export_function("roundtrip_serde_json_value", roundtrip_serde_json_value)?;
+
     Ok(())
-});
+}

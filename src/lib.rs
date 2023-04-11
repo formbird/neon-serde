@@ -4,13 +4,21 @@ pub mod de;
 pub mod errors;
 pub mod ser;
 
-#[cfg(feature = "dates")]
-pub mod dates;
 mod macros;
 
 pub use de::{from_value, from_value_opt};
 pub use ser::to_value;
+use neon::prelude::*;
 
+pub fn log<'a, C: Context<'a>>(cx: &mut C, val: Handle<'a, JsValue>) -> JsResult<'a, JsValue> {
+    let global = cx.global();
+    let log = global.get::<JsObject, _, _>(cx, "console")?;
+    let log = log.get::<JsFunction, _, _>(cx, "log")?;
+    let s = JsString::new(cx, "RUST log");
+    let s = s.as_value(cx);
+    let args = vec![s, val];
+    log.call(cx, global, args)
+}
 #[cfg(test)]
 mod tests {
     #![allow(clippy::let_unit_value)]

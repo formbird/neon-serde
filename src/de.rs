@@ -84,13 +84,17 @@ impl<'x, 'd, 'a, 'j, C: Context<'j>> serde::de::Deserializer<'x>
         } else if let Ok(_val) = self.input.downcast::<JsBuffer, C>(self.cx) {
             self.deserialize_bytes(visitor)
         } else if let Ok(date) = self.input.downcast::<JsDate, C>(self.cx) {
-            // this is needed so that when we can serialize the date back into a JS object
-            let date = date.value(self.cx);
-            let date = self.cx.number(date);
-            let value = self.cx.empty_object();
-            value.set(self.cx, "__neon_serde_date", date)?;
-            let mut deserializer = JsObjectAccess::new(self.cx, value)?;
-            visitor.visit_map(&mut deserializer)
+            #[cfg(feature = "dates")]
+            {
+                let date = date.value(self.cx);
+                let date = chrono::TimeZone::timestamp_millis_opt(&chrono::Utc, date as i64).unwrap();
+                visitor.visit_string(date.to_rfc3339())
+            }
+            #[cfg(not(feature = "dates"))]
+            {
+                _ = date;
+                unimplemented!("dates feature must be enabled to deserialize dates")
+            }
         } else if let Ok(val) = self.input.downcast::<JsArray, C>(self.cx) {
             let mut deserializer = JsArrayAccess::new(self.cx, val);
             visitor.visit_seq(&mut deserializer)
@@ -269,11 +273,6 @@ impl<'x, 'a, 'j, C: Context<'j>> MapAccess<'x> for JsObjectAccess<'a, 'j, C> {
         }
         let prop_name = self.prop_names.get::<JsString, _, _>(self.cx, self.idx)?;
         let value = self.input.get(self.cx, prop_name)?;
-        let global = self.cx.global();
-        let console = global.get::<JsObject, _, _>(self.cx, "console")?;
-        console
-            .get::<JsFunction, _, _>(self.cx, "log")?
-            .call(self.cx, global, vec![value])?;
         self.idx += 1;
         let mut de = Deserializer::new(self.cx, value);
         let res = seed.deserialize(&mut de)?;
