@@ -1,8 +1,7 @@
 # neon-serde
 
-This crate is a utility to easily convert values between
-
-A `Handle<JsValue>` from the [neon](https://github.com/neon-bindings/neon) crate
+This crate is a utility to easily convert values between a`Handle<JsValue>` from
+the [neon](https://github.com/neon-bindings/neon) crate
 and any value implementing `serde::{Serialize, Deserialize}`
 
 This is a fork of [katyo/neon-serde](https://github.com/katyo/neon-serde) project.
@@ -18,74 +17,10 @@ neon-serde is tested on node `16` and `18`
 Convert a `Handle<JsValue>` to a type implementing `serde::Deserialize`
 
 #### `neon_serde::to_value`
+
 Convert a value implementing `serde::Serialize` to a `Handle<JsValue>`
 
-## Export Macro example
-
-The export! macro allows you to quickly define functions automatically convert thier arguments
-
-```rust
-use neon::prelude::*;
-use neon_serde::export;
-use serde::Deserialize;
-
-#[derive(Deserialize)]
-struct User {
-    name: String,
-    age: u16,
-}
-
-export! {
-
-    /// Say hello based on a persons name
-    fn say_hello(name: String) -> String {
-        format!("Hello, {}!", name)
-    }
-
-    /// Say how old someone is
-    fn greet(user: User) -> String {
-        format!("{} is {} years old", user.name, user.age)
-    }
-
-    /// Say how old someone is, if they exist
-    fn maybe_say_hello(user: Option<User>) -> Option<String> {
-        user.map(greet)
-    }
-
-    /// Sorts the bytes in a string
-    /// use `serde_bytes::ByteBuf` to return a `Buffer` in node
-    /// a `Vec<u8>` will be an array
-    fn sort_utf8_bytes(str: String) -> serde_bytes::ByteBuf {
-        let mut bytes = str.into_bytes();
-        bytes.sort();
-        serde_bytes::ByteBuf::from(bytes)
-    }
-
-    /// using `serde_bytes::ByteBuf` will make passing an array
-    /// of numbers an error
-    ///
-    /// note: `-> ()` is NOT optional
-    fn expect_buffer_only(_buff: serde_bytes::ByteBuf) -> () {
-        // code
-    }
-
-    /// using `Vec<u8>` not accept a buffer
-    fn expect_array(_buff: Vec<u8>) -> () {
-        // code
-    }
-
-    /// calculate fibonacci recursively
-    fn fibonacci(n: i32) -> i32 {
-        match n {
-            1 | 2 => 1,
-            n => fibonacci(n - 1) + fibonacci(n - 2)
-        }
-    }
-}
-```
-
-
-## Direct Usage Example
+## Example
 
 ```rust
 use serde::{Serialize, Deserialize};
@@ -125,4 +60,5 @@ fn serialize_something(mut cx: FunctionContext) -> JsResult<JsValue> {
 ## Limitations
 
 ### Data ownership
+
 All Deserialize Values must own all their data (they must have the trait `serde::DererializeOwned`)

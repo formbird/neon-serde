@@ -4,7 +4,7 @@
   "main": "index.js",
   "repository": "https://github.com/formbird/neon-serde.git",
   "private": true,
-  "workspaces": ["tests", "test_macro"],
+  "workspaces": ["tests"],
   "scripts": {
     "test": "yarn workspaces run test"
   }

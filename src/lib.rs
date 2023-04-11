@@ -4,8 +4,6 @@ pub mod de;
 pub mod errors;
 pub mod ser;
 
-mod macros;
-
 pub use de::{from_value, from_value_opt};
 use neon::prelude::*;
 pub use ser::to_value;

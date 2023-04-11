@@ -33,4 +33,4 @@ serde_bytes = "0.11.9"
 dates = ["dep:chrono"]
 
 [workspace]
-members = ["test_macro/native", "tests/native"]
+members = ["tests/native"]
