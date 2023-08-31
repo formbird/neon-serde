@@ -1,5 +1,6 @@
 use neon::prelude::*;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 
 #[derive(Serialize, Debug, Deserialize)]
 struct AnObject {
@@ -182,6 +183,16 @@ fn roundtrip_serde_json_value(mut cx: FunctionContext) -> JsResult<JsValue> {
     Ok(handle)
 }
 
+fn serialize_date(mut cx: FunctionContext) -> JsResult<JsValue> {
+    let obj = json!({
+        "someValue": "$::date:1688842800000"
+    });
+
+    let handle = neon_serde::to_value(&mut cx, &obj).or_else(|e| cx.throw_error(e.to_string()))?;
+
+    Ok(handle)
+}
+
 #[neon::main]
 fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("make_num_77", make_num_77)?;
@@ -200,6 +211,8 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
 
     cx.export_function("roundtrip_object", roundtrip_object)?;
     cx.export_function("roundtrip_serde_json_value", roundtrip_serde_json_value)?;
+
+    cx.export_function("date_ser", serialize_date)?;
 
     Ok(())
 }

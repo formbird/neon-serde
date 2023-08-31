@@ -4,10 +4,12 @@ use std::marker::PhantomData;
 
 use neon::prelude::*;
 use neon::types::buffer::TypedArray;
+use neon::types::JsDate;
 use num;
 use serde::ser::{self, Serialize};
 
 use crate::errors::{Error, Result as LibResult};
+use crate::SPECIAL_DATE_PREFIX;
 
 fn as_num<T: num::cast::NumCast, OutT: num::cast::NumCast>(n: T) -> LibResult<OutT> {
     match num::cast::<T, OutT>(n) {
@@ -181,9 +183,19 @@ where
 
     #[inline]
     fn serialize_str(self, v: &str) -> Result<Self::Ok, Self::Error> {
-        let len = v.len();
-        let js_str = JsString::try_new(self.cx, v).map_err(|_| Error::StringTooLong(len))?;
-        Ok(js_str.upcast())
+        match v.strip_prefix(SPECIAL_DATE_PREFIX) {
+            Some(date) if cfg!(feature = "dates") => {
+                let date = date.parse::<f64>().map_err(|e| Error::Msg(e.to_string()))?;
+                let date = JsDate::new(self.cx, date)?;
+                Ok(date.upcast())
+            }
+            Some(_) | None => {
+                let len = v.len();
+                let js_str =
+                    JsString::try_new(self.cx, v).map_err(|_| Error::StringTooLong(len))?;
+                Ok(js_str.upcast())
+            }
+        }
     }
 
     #[inline]

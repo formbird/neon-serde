@@ -1,5 +1,7 @@
 #![doc = include_str!("../readme.md")]
 
+pub(crate) const SPECIAL_DATE_PREFIX: &str = "$::date:";
+
 pub mod de;
 pub mod errors;
 pub mod ser;

@@ -120,7 +120,7 @@ describe('all values ok', () => {
             date2: date
         }
         const o2 = native.roundtrip_serde_json_value(o);
-        // convert to js date for euqality check
+        // convert to js date for equality check
         o2.date2 = new Date(o2.date2);
         expect(o).toEqual(o2);
     });
@@ -149,6 +149,15 @@ describe('all values ok', () => {
         expect(o).toEqual(o2);
     });
 });
+
+describe('dates', () => {
+    it('date ser', () => {
+        let newObj = native.date_ser()
+        const value = newObj.someValue
+        expect(value).toBeInstanceOf(Date)
+        expect(value.toISOString()).toBe("2023-07-08T19:00:00.000Z")
+    })
+})
 
 describe('throwing functions', () => {
 

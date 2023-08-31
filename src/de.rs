@@ -84,16 +84,10 @@ impl<'x, 'd, 'a, 'j, C: Context<'j>> serde::de::Deserializer<'x>
         } else if let Ok(_val) = self.input.downcast::<JsBuffer, C>(self.cx) {
             self.deserialize_bytes(visitor)
         } else if let Ok(date) = self.input.downcast::<JsDate, C>(self.cx) {
-            #[cfg(feature = "dates")]
-            {
+            if cfg!(feature = "dates") {
                 let date = date.value(self.cx);
-                let date =
-                    chrono::TimeZone::timestamp_millis_opt(&chrono::Utc, date as i64).unwrap();
-                visitor.visit_string(date.to_rfc3339())
-            }
-            #[cfg(not(feature = "dates"))]
-            {
-                _ = date;
+                visitor.visit_string(format!("{}{}", crate::SPECIAL_DATE_PREFIX, date))
+            } else {
                 unimplemented!("dates feature must be enabled to deserialize dates")
             }
         } else if let Ok(val) = self.input.downcast::<JsArray, C>(self.cx) {
